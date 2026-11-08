@@ -21,13 +21,17 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .mono { font-family: "SF Mono", ui-monospace, Menlo, monospace; font-size: 12px; }
 
 /* chip */
+/* The chip copies AI Studio's own Tools button (see mirrorChip) through these variables. */
 .chip {
-  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 10px;
-  border-radius: 999px; border: 1px solid var(--line); color: var(--text);
-  font: 500 12.5px "Google Sans", system-ui, sans-serif; transition: background .15s;
+  display: inline-flex; align-items: center; gap: var(--chip-gap, 4px);
+  height: var(--chip-h, 32px); padding: var(--chip-pad, 0 12px);
+  border-radius: var(--chip-radius, 12px); border: var(--chip-border, 1px solid var(--line));
+  background: var(--chip-bg, transparent); color: var(--chip-color, var(--text));
+  font: var(--chip-font, 500 14px/20px Inter, sans-serif); transition: background .15s;
 }
-.chip:hover, .chip[aria-expanded="true"] { background: var(--raised); }
-.chip svg { width: 16px; height: 16px; }
+.chip:hover, .chip[aria-expanded="true"] { background: color-mix(in srgb, var(--chip-color, var(--text)) 7%, var(--chip-bg, transparent)); }
+.chip svg { width: var(--chip-icon, 18px); height: var(--chip-icon, 18px); }
+.chip .dot { margin-left: 2px; }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex: none; }
 .dot.ok { background: var(--ok); } .dot.bad { background: var(--bad); } .dot.warn { background: var(--warn); }
 .badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 11px; display: inline-grid; place-items: center; }
@@ -57,7 +61,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .note.warn { background: var(--warn-soft); color: var(--warn); }
 .actions { display: flex; gap: 8px; }
 .btn { height: 34px; padding: 0 16px; border-radius: 999px; font: 500 13px "Google Sans", system-ui, sans-serif; display: inline-flex; align-items: center; gap: 6px; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); flex: 1; justify-content: center; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); justify-content: center; }
+.actions .btn.primary { flex: 1; }
 .btn.primary:disabled { opacity: .5; cursor: default; }
 .btn.tonal { background: var(--raised); }
 .btn.tonal:hover { filter: brightness(.97); }

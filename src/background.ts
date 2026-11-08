@@ -47,7 +47,8 @@ async function connect(force = false): Promise<Conn> {
         name: t.name,
         title: t.title,
         description: t.description ?? '',
-        policy: s.policies[t.name] ?? defaultPolicy(t.name),
+        readOnly: t.annotations?.readOnlyHint,
+        policy: s.policies[t.name] ?? defaultPolicy(t.annotations?.readOnlyHint),
       };
       try {
         info.declaration = {
@@ -76,7 +77,7 @@ async function status(refresh: boolean): Promise<Status> {
   try {
     const c = await connect(refresh);
     // Policies can change in the options page without a reconnect.
-    for (const t of c.tools) t.policy = s.policies[t.name] ?? defaultPolicy(t.name);
+    for (const t of c.tools) t.policy = s.policies[t.name] ?? defaultPolicy(t.readOnly);
     return { configured: true, connected: true, server: new URL(s.serverUrl).host, serverName: c.serverName, tools: c.tools };
   } catch (e) {
     return { configured: true, connected: false, server: safeHost(s.serverUrl), tools: [], error: errText(e) };
@@ -138,6 +139,11 @@ chrome.runtime.onMessage.addListener((req: Request, _sender, reply: (r: Response
         return call(req.name, req.args);
       case 'open-options':
         await chrome.runtime.openOptionsPage();
+        return null;
+      case 'reload':
+        // Development: lets the AI Studio tab pick up a fresh build without chrome://extensions.
+        if (!__DEV__) throw new Error('reload is only available in development builds');
+        setTimeout(() => chrome.runtime.reload(), 50);
         return null;
     }
   };

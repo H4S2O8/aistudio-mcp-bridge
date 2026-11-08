@@ -221,7 +221,8 @@ function ensureChip() {
   chip = shadowHost('mcp-bridge-chip');
   chip.host.style.display = 'inline-flex';
   chip.host.style.alignItems = 'center';
-  row.append(chip.host);
+  // ms-prompt-box-tools is flex: 1 and would push anything after it to the far right.
+  row.insertBefore(chip.host, row.querySelector('ms-prompt-box-tools'));
   renderChip();
 }
 
@@ -236,6 +237,7 @@ function renderChip() {
     class: 'chip', 'aria-expanded': String(popOpen), title: 'MCP 工具',
     onclick: () => { popOpen = !popOpen; popNote = null; renderChip(); if (popOpen) void loadStatus(); },
   }, h('span', { html: ICON.plug, style: 'display:inline-grid' }), 'MCP', h('span', { class: `dot ${dotCls}` }), waiting ? h('span', { class: 'badge' }, String(waiting)) : null);
+  mirrorChip(button);
   chip.root.replaceChildren(button);
   if (popOpen) {
     const pop = popover();
@@ -245,6 +247,26 @@ function renderChip() {
     pop.style.left = `${Math.max(12, Math.min(r.left, innerWidth - w - 12))}px`;
     pop.style.bottom = `${innerHeight - r.top + 8}px`;
   }
+}
+
+/** Copy the look of AI Studio's Tools button so the chip sits in the row like a native one. */
+function mirrorChip(button: HTMLElement) {
+  const tools = document.querySelector<HTMLElement>(SEL.toolsButton);
+  if (!tools) return; // keeps the CSS defaults, which were measured from the same button
+  const s = getComputedStyle(tools);
+  const icon = tools.querySelector('span');
+  const vars: Record<string, string> = {
+    '--chip-radius': s.borderRadius,
+    '--chip-border': `${s.borderTopWidth} ${s.borderTopStyle} ${s.borderTopColor}`,
+    '--chip-h': s.height,
+    '--chip-pad': s.padding,
+    '--chip-gap': s.gap === 'normal' ? '4px' : s.gap,
+    '--chip-font': `${s.fontWeight} ${s.fontSize}/${s.lineHeight} ${s.fontFamily}`,
+    '--chip-color': s.color,
+    '--chip-bg': s.backgroundColor,
+  };
+  if (icon) vars['--chip-icon'] = getComputedStyle(icon).fontSize;
+  for (const [k, v] of Object.entries(vars)) button.style.setProperty(k, v);
 }
 
 function popover(): HTMLElement {
@@ -321,5 +343,13 @@ new MutationObserver(muts => {
   clearTimeout(timer);
   timer = window.setTimeout(() => { ensureChip(); scan(); }, 150);
 }).observe(document.body, { childList: true, subtree: true });
+
+// Development builds only (npm run build:dev): window.postMessage({ mcpBridge: 'reload' }, '*')
+// reloads the extension. It can only trigger a reload, nothing else.
+if (__DEV__) {
+  addEventListener('message', e => {
+    if (e.source === window && e.data?.mcpBridge === 'reload') void send({ type: 'reload' }).catch(() => {});
+  });
+}
 
 void loadStatus().then(() => { ensureChip(); scan(); });

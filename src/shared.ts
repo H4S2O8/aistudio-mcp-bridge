@@ -5,7 +5,7 @@ export type Policy = 'auto' | 'confirm' | 'off';
 export interface Settings {
   serverUrl: string;
   token: string;
-  /** Per-tool policy; a tool missing here falls back to defaultPolicy(name). */
+  /** Per-tool policy; a tool missing here falls back to defaultPolicy(readOnlyHint). */
   policies: Record<string, Policy>;
 }
 
@@ -20,6 +20,8 @@ export interface ToolInfo {
   title?: string;
   description: string;
   policy: Policy;
+  /** The server's readOnlyHint annotation, if it sent one. */
+  readOnly?: boolean;
   declaration?: Declaration;
   /** Set when the input schema cannot be expressed in AI Studio's schema subset. */
   schemaError?: string;
@@ -48,22 +50,17 @@ export interface CallResult {
 export type Request =
   | { type: 'status'; refresh?: boolean }
   | { type: 'call'; name: string; args: Record<string, unknown> }
-  | { type: 'open-options' };
+  | { type: 'open-options' }
+  | { type: 'reload' };
 
 export type Response<T> = { ok: true; data: T } | { ok: false; error: string };
 
-// Tools that only read. Everything else needs a click unless the user says otherwise.
-const READ_ONLY = new Set([
-  'novelai_account',
-  'novelai_list_options',
-  'novelai_guide',
-  'novelai_library_search',
-  'novelai_library_get',
-  'novelai_eh_tag_search',
-]);
-
-export function defaultPolicy(name: string): Policy {
-  return READ_ONLY.has(name) ? 'auto' : 'confirm';
+/**
+ * Only tools the server marks read-only (MCP annotation readOnlyHint) run without a click.
+ * Everything else, including tools without annotations, waits for the user unless they change it.
+ */
+export function defaultPolicy(readOnlyHint: boolean | undefined): Policy {
+  return readOnlyHint === true ? 'auto' : 'confirm';
 }
 
 export async function loadSettings(): Promise<Settings> {

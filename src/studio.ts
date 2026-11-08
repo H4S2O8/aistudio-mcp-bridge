@@ -12,6 +12,7 @@ export const SEL = {
   promptChunk: 'ms-prompt-chunk',
   runButton: 'ms-prompt-box ms-run-button button',
   buttonsLeft: 'ms-prompt-box .buttons-row .button-row-left',
+  toolsButton: 'ms-prompt-box ms-prompt-box-tools button',
   fcToggle: 'mat-slide-toggle.function-calling-toggle button[role="switch"]',
   fcEdit: 'button.edit-function-declarations-button',
   settingsToggle: 'button[aria-label="Toggle run settings panel"]',

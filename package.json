@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
+    "build:dev": "node build.mjs --dev",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,5 +15,8 @@
     "@types/chrome": "^0.3.7",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
-  }
+  },
+  "license": "MIT",
+  "description": "Chrome extension: Google AI Studio's native function calling runs tools on a remote MCP server",
+  "repository": "github:H4S2O8/aistudio-mcp-bridge"
 }
