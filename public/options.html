@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Studio MCP Bridge</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header class="top">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>AI Studio MCP Bridge</h1>
+        <p class="sub">让 AI Studio 的原生函数调用直接执行远程 MCP 工具</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>服务器</h2>
+      <form id="server">
+        <label class="field">
+          <span>MCP 地址（Streamable HTTP）</span>
+          <input id="url" type="url" placeholder="https://example.com/mcp" required autocomplete="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span>Bearer Token <em>可选</em></span>
+          <div class="secret">
+            <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="不需要鉴权就留空">
+            <button type="button" id="reveal" class="ghost" aria-label="显示或隐藏 token">显示</button>
+          </div>
+        </label>
+        <div class="row">
+          <button type="submit" class="primary" id="save">保存并连接</button>
+          <div id="conn" class="conn" role="status"></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>工具</h2>
+        <div class="legend">
+          <span><b>自动</b> 模型一调用就执行</span>
+          <span><b>确认</b> 在面板里点了才执行</span>
+          <span><b>停用</b> 不写进声明</span>
+        </div>
+      </div>
+      <div id="tools" class="tools"><p class="empty">连上服务器后显示工具列表。</p></div>
+    </section>
+
+    <p class="foot">Token 只存在本机的扩展存储里，只发给上面这个地址。</p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

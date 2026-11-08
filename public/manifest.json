@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "AI Studio MCP Bridge",
+  "version": "0.1.0",
+  "description": "Runs Google AI Studio's native function calls against a remote MCP server.",
+  "icons": { "16": "icon-16.png", "48": "icon-48.png", "128": "icon-128.png" },
+  "action": { "default_title": "AI Studio MCP Bridge" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "options_page": "options.html",
+  "permissions": ["storage"],
+  "host_permissions": ["https://aistudio.google.com/*"],
+  "optional_host_permissions": ["https://*/*", "http://localhost/*", "http://127.0.0.1/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
